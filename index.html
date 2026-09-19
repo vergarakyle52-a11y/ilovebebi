@@ -162,16 +162,13 @@
 			box-shadow: 0 12px 24px rgba(117, 70, 76, .16);
 		}
 		.message-card.has-image .message-image { display: block; animation: image-reveal .7s .12s both; }
-		.message-video {
+		.message-audio {
 			display: none;
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			opacity: 0;
-			pointer-events: none;
-			border: 0;
+			width: 100%;
+			margin: 0 auto 18px;
+			max-width: 280px;
 		}
-		.message-card.has-audio .message-video { display: block; }
+		.message-card.has-audio .message-audio { display: block; }
 		.message-mark { color: var(--rose); font-size: 2rem; line-height: 1; }
 		h2 { margin: 18px 0 12px; font-size: 2rem; }
 		#message-text { margin: 0 auto 28px; color: var(--muted); line-height: 1.7; }
@@ -296,7 +293,7 @@ enjoy your 18th, jam! you deserve to be celebrated today and always. please stay
 		</section>
 		<section class="boyfriend-section" aria-label="Message from your boyfriend">
 			<p class="boyfriend-label">The most special message</p>
-			<button class="name-button boyfriend-button" data-name="Your Boyfriend" data-message="4 years ago, nagreply ako sa story mo without knowing na birthday mo pala. Ang dami na palang signs na sa'yo rin ako babagsak. Thank God kasi umabot tayo sa debut mo kahit ilang beses na tayong hindi nagkaintindihan at tampuhan. I want you to be extra special today kasi lagi ka namang special sa'kin araw-araw. Thank you kasi until now hindi ka pa rin nagbabago, ikaw pa rin yung maalaga, masungit in a good way, selosa, and iyakin na Jam na niligawan ko. I may not a good-looking guy or perfect boyfie for you but I want you to know that I'm trying to be enough for you. I will always be the guy na nakikinig sa mga hinanaing mo, yayakapin ka kapag pagod kana, hihilutin kapag may iniinda ka, at mamahalin ka sa tuwing naiisip mo na nag-iisa ka. I hope matupad mo yung mga goal mo in life, kasi  gusto kong nakikita kang masaya palagi. Ngayong 18 kana, ganap ka nang dalaga pero baby pa rin kita. Gusto ko lang na tandaan mo na nandito lang ako palagi, sayong-sayo, at habang-buhay na magiging sandalan mo. I love you pakiss ako ah:> " data-image="fa81f874-b89b-47c4-9095-708b67ccb2ef.jpg" data-image-alt="A romantic memory" data-video="1GFpjG_5ZV4">Open my message ♡</button>
+			<button class="name-button boyfriend-button" data-name="Your Boyfriend" data-message="4 years ago, nagreply ako sa story mo without knowing na birthday mo pala. Ang dami na palang signs na sa'yo rin ako babagsak. Thank God kasi umabot tayo sa debut mo kahit ilang beses na tayong hindi nagkaintindihan at tampuhan. I want you to be extra special today kasi lagi ka namang special sa'kin araw-araw. Thank you kasi until now hindi ka pa rin nagbabago, ikaw pa rin yung maalaga, masungit in a good way, selosa, and iyakin na Jam na niligawan ko. I may not a good-looking guy or perfect boyfie for you but I want you to know that I'm trying to be enough for you. I will always be the guy na nakikinig sa mga hinanaing mo, yayakapin ka kapag pagod kana, hihilutin kapag may iniinda ka, at mamahalin ka sa tuwing naiisip mo na nag-iisa ka. I hope matupad mo yung mga goal mo in life, kasi  gusto kong nakikita kang masaya palagi. Ngayong 18 kana, ganap ka nang dalaga pero baby pa rin kita. Gusto ko lang na tandaan mo na nandito lang ako palagi, sayong-sayo, at habang-buhay na magiging sandalan mo. I love you pakiss ako ah:> " data-image="./fa81f874-b89b-47c4-9095-708b67ccb2ef.jpg" data-image-alt="A romantic memory" data-audio="./keshi%20-%20Soft%20Spot%20(Acoustic)%20Official%20Audio.mp3">Open my message ♡</button>
 		</section>
 		<p class="signature">Made with love, just for you ♡</p>
 	</main>
@@ -305,7 +302,7 @@ enjoy your 18th, jam! you deserve to be celebrated today and always. please stay
 		<div class="message-card">
 			<div class="message-mark" aria-hidden="true">♡</div>
 			<img class="message-image" id="message-image" alt="A romantic memory">
-			<iframe class="message-video" id="message-video" title="Romantic audio for your message" allow="autoplay; encrypted-media"></iframe>
+			<audio class="message-audio" id="message-audio" controls preload="auto"></audio>
 			<h2 id="message-title"></h2>
 			<p id="message-text"></p>
 			<button class="close-button" id="close-dialog" type="button">Choose another name</button>
@@ -317,33 +314,44 @@ enjoy your 18th, jam! you deserve to be celebrated today and always. please stay
 		const messageTitle = document.querySelector('#message-title');
 		const messageText = document.querySelector('#message-text');
 		const messageImage = document.querySelector('#message-image');
-		const messageVideo = document.querySelector('#message-video');
+		const messageAudio = document.querySelector('#message-audio');
 		const messageCard = document.querySelector('.message-card');
 		const closeButton = document.querySelector('#close-dialog');
 
 		document.querySelectorAll('.name-button').forEach((button) => {
-			button.addEventListener('click', () => {
+			button.addEventListener('click', async () => {
 				messageTitle.textContent = `A message from ${button.dataset.name}`;
 				messageText.textContent = button.dataset.message;
 				messageCard.classList.toggle('has-image', Boolean(button.dataset.image));
-				messageCard.classList.toggle('has-audio', Boolean(button.dataset.video));
+				messageCard.classList.toggle('has-audio', Boolean(button.dataset.audio));
 				if (button.dataset.image) {
 					messageImage.src = button.dataset.image;
 					messageImage.alt = button.dataset.imageAlt;
 				}
 				dialog.showModal();
-				if (button.dataset.video) {
-					messageVideo.src = "d:\\keshi - Soft Spot (Acoustic) Official Audio.mp3";
+				if (button.dataset.audio) {
+					messageAudio.src = button.dataset.audio;
+					messageAudio.load();
+					try {
+						await messageAudio.play();
+					} catch (error) {
+						console.log('Autoplay was blocked by the browser:', error);
+					}
+				} else {
+					messageAudio.pause();
+					messageAudio.src = '';
 				}
 			});
 		});
 
-		const stopVideo = () => {
-			messageVideo.src = '';
+		const stopAudio = () => {
+			messageAudio.pause();
+			messageAudio.currentTime = 0;
+			messageAudio.src = '';
 		};
 
 		closeButton.addEventListener('click', () => dialog.close());
-		dialog.addEventListener('close', stopVideo);
+		dialog.addEventListener('close', stopAudio);
 		dialog.addEventListener('click', (event) => {
 			if (event.target === dialog) dialog.close();
 		});
